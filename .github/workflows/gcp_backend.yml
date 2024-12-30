@@ -62,11 +62,11 @@ jobs:
         uses: docker/build-push-action@v6
         with:
           context: .
-          file: ./backend/Dockerfile.datadog
+          file: ./backend/Dockerfile
           push: true
-          tags: gcr.io/${{ vars.GCP_PROJECT_ID }}/${{ env.SERVICE }}:latest
-          cache-from: type=registry,ref=gcr.io/${{ vars.GCP_PROJECT_ID }}/${{ env.SERVICE }}:buildcache
-          cache-to: type=registry,ref=gcr.io/${{ vars.GCP_PROJECT_ID }}/${{ env.SERVICE }}:buildcache,mode=max
+          tags: us-central1-docker.pkg.dev/${{ vars.GCP_PROJECT_ID }}/${{ env.SERVICE }}/${{ env.SERVICE }}:latest
+          cache-from: type=registry,ref=us-central1-docker.pkg.dev/${{ vars.GCP_PROJECT_ID }}/${{ env.SERVICE }}/${{ env.SERVICE }}:buildcache
+          cache-to: type=registry,ref=us-central1-docker.pkg.dev/${{ vars.GCP_PROJECT_ID }}/${{ env.SERVICE }}/${{ env.SERVICE }}:buildcache,mode=max
 
       - name: Deploy to Cloud Run
         id: deploy

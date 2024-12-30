@@ -74,7 +74,7 @@ jobs:
         with:
           service: ${{ env.SERVICE }}
           region: ${{ env.REGION }}
-          image: gcr.io/${{ vars.GCP_PROJECT_ID }}/${{ env.SERVICE }}
+          image: us-central1-docker.pkg.dev/${{ vars.GCP_PROJECT_ID }}/${{ env.SERVICE }}/${{ env.SERVICE }}
 
       # If required, use the Cloud Run url output in later steps
       - name: Show Output

@@ -1,4 +1,4 @@
-name: Deploy Backend to Cloud RUN
+name: Deploy Plugins to Cloud RUN
 
 on:
 #  push:

@@ -10,13 +10,13 @@
     ],
     "external_integration": {
       "triggers_on": "memory_creation",
-      "webhook_url": "https://based-hardware--plugins-api.modal.run/notion-crm",
-      "setup_completed_url": "https://based-hardware--plugins-api.modal.run/setup/notion-crm",
+      "webhook_url": "https://plugins-260546714702.us-central1.run.app/notion-crm",
+      "setup_completed_url": "https://plugins-260546714702.us-central1.run.app/setup/notion-crm",
       "setup_instructions_file_path": "/plugins/instructions/notion-crm/README.md",
       "auth_steps": [
         {
           "name": "Authorize Notion Account",
-          "url": "https://based-hardware--plugins-api.modal.run/setup-notion-crm"
+          "url": "https://plugins-260546714702.us-central1.run.app/setup-notion-crm"
         }
       ]
     },
@@ -33,7 +33,7 @@
     ],
     "external_integration": {
       "triggers_on": "transcript_processed",
-      "webhook_url": "https://based-hardware--plugins-api.modal.run/news-checker",
+      "webhook_url": "https://plugins-260546714702.us-central1.run.app/news-checker",
       "setup_completed_url": null,
       "setup_instructions_file_path": "/plugins/instructions/news-checker/README.md"
     },
@@ -50,7 +50,7 @@
     ],
     "external_integration": {
       "triggers_on": "memory_creation",
-      "webhook_url": "https://based-hardware--plugins-api.modal.run/conversation-feedback",
+      "webhook_url": "https://plugins-260546714702.us-central1.run.app/conversation-feedback",
       "setup_instructions_file_path": ""
     },
     "deleted": true
@@ -66,7 +66,7 @@
     ],
     "external_integration": {
       "triggers_on": "transcript_processed",
-      "webhook_url": "https://based-hardware--plugins-api.modal.run/emotional-support",
+      "webhook_url": "https://plugins-260546714702.us-central1.run.app/emotional-support",
       "setup_instructions_file_path": ""
     },
     "deleted": true
@@ -82,8 +82,8 @@
     ],
     "external_integration": {
       "triggers_on": "memory_creation",
-      "webhook_url": "https://based-hardware--plugins-api.modal.run/zapier/memories",
-      "setup_completed_url": "https://based-hardware--plugins-api.modal.run/setup/zapier",
+      "webhook_url": "https://plugins-260546714702.us-central1.run.app/zapier/memories",
+      "setup_completed_url": "https://plugins-260546714702.us-central1.run.app/setup/zapier",
       "setup_instructions_file_path": "/plugins/instructions/zapier/README.md",
       "auth_steps": [
         {
@@ -92,7 +92,7 @@
         },
         {
           "name": "Connect to Friend App",
-          "url": "https://based-hardware--plugins-api.modal.run/setup-zapier"
+          "url": "https://plugins-260546714702.us-central1.run.app/setup-zapier"
         }
       ]
     },
@@ -109,8 +109,8 @@
     ],
     "external_integration": {
       "triggers_on": "memory_creation",
-      "webhook_url": "https://based-hardware--plugins-api.modal.run/multion/process_transcript",
-      "setup_completed_url": "https://based-hardware--plugins-api.modal.run/multion/check_setup_completion",
+      "webhook_url": "https://plugins-260546714702.us-central1.run.app/multion/process_transcript",
+      "setup_completed_url": "https://plugins-260546714702.us-central1.run.app/multion/check_setup_completion",
       "setup_instructions_file_path": "/plugins/instructions/multion-amazon/README.md"
     },
     "deleted": true
@@ -126,8 +126,8 @@
     ],
     "external_integration": {
       "triggers_on": "transcript_processed",
-      "webhook_url": "https://based-hardware--plugins-api.modal.run/ahda/send-webhook",
-      "setup_completed_url": "https://based-hardware--plugins-api.modal.run/ahda/completion",
+      "webhook_url": "https://plugins-260546714702.us-central1.run.app/ahda/send-webhook",
+      "setup_completed_url": "https://plugins-260546714702.us-central1.run.app/ahda/completion",
       "setup_instructions_file_path": "/plugins/instructions/ahda/README.md",
       "auth_steps": [
         {
@@ -136,7 +136,7 @@
         },
         {
           "name": "Enter URL into OMI",
-          "url": "https://based-hardware--plugins-api.modal.run/ahda/index"
+          "url": "https://plugins-260546714702.us-central1.run.app/ahda/index"
         }
       ]
     },
@@ -154,8 +154,8 @@
     ],
     "external_integration": {
       "triggers_on": "transcript_processed",
-      "webhook_url": "https://based-hardware--plugins-api.modal.run/mentor",
-      "setup_completed_url": "https://based-hardware--plugins-api.modal.run/setup/mentor",
+      "webhook_url": "https://plugins-260546714702.us-central1.run.app/mentor",
+      "setup_completed_url": "https://plugins-260546714702.us-central1.run.app/setup/mentor",
       "setup_instructions_file_path": "/plugins/instructions/mentor_01/README.md"
     },
     "proactive_notification": {

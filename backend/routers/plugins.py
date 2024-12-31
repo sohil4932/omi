@@ -11,6 +11,7 @@ from ulid import ULID
 from database.apps import add_app_to_db
 from database.redis_db import set_app_review_cache, increase_app_installs_count, enable_app, decrease_app_installs_count, \
     disable_app
+from database.plugins import add_plugin_from_community_json
 from models.app import App
 from models.plugin import Plugin
 from utils.apps import get_available_app_by_id, get_app_usage_history, get_app_money_made
@@ -98,14 +99,14 @@ def get_plugin_money_made(plugin_id: str):
     return money
 
 
-# @router.get('/v1/migrate-plugins', tags=['v1'])
-# def migrate_plugins():
-#     response = requests.get('https://raw.githubusercontent.com/BasedHardware/Omi/main/community-plugins.json')
-#     if response.status_code != 200:
-#         return []
-#     data = response.json()
-#     for plugin in data:
-#         add_plugin_from_community_json(plugin)
+@router.get('/v1/migrate-plugins', tags=['v1'])
+def migrate_plugins():
+    response = requests.get('https://raw.githubusercontent.com/sohil4932/Omi/main/community-plugins.json')
+    if response.status_code != 200:
+        return []
+    data = response.json()
+    for plugin in data:
+        add_plugin_from_community_json(plugin)
 
 
 @router.post('/v3/plugins', tags=['v1'])

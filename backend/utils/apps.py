@@ -65,6 +65,7 @@ def get_available_apps(uid: str, include_reviews: bool = False) -> List[App]:
     tester_apps = []
     all_apps = []
     tester = is_tester(uid)
+    include_reviews = False
     if cachedApps := get_generic_cache('get_public_approved_apps_data'):
         print('get_public_approved_plugins_data from cache----------------------------')
         public_approved_data = cachedApps

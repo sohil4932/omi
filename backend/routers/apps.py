@@ -31,7 +31,7 @@ router = APIRouter()
 # ******************************************************
 
 @router.get('/v1/apps', tags=['v1'], response_model=List[App])
-def get_apps(uid: str = Depends(auth.get_current_user_uid), include_reviews: bool = True):
+def get_apps(uid: str = Depends(auth.get_current_user_uid), include_reviews: bool = False):
     return get_available_apps(uid, include_reviews=include_reviews)
 
 

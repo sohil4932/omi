@@ -1,10 +1,6 @@
-name: Deploy Backend Pusher to Cloud RUN
+name: Deploy Speech Models to Cloud RUN
 
 on:
-#  push:
-#    branches: [ "main" ]
-#    paths:
-#      - 'backend/**'
   workflow_dispatch:
     inputs:
       environment:
@@ -17,8 +13,9 @@ on:
         default: 'main'
 
 env:
-  SERVICE: pusher
+  SERVICE: models
   REGION: us-central1
+  CONTAINER_NAME: speech-models
 
 jobs:
   deploy:
@@ -62,7 +59,7 @@ jobs:
         uses: docker/build-push-action@v6
         with:
           context: .
-          file: ./backend/pusher/Dockerfile
+          file: ./backend/modal/Dockerfile
           push: true
           tags: us-central1-docker.pkg.dev/${{ vars.GCP_PROJECT_ID }}/${{ env.SERVICE }}/${{ env.SERVICE }}:latest
           cache-from: type=registry,ref=us-central1-docker.pkg.dev/${{ vars.GCP_PROJECT_ID }}/${{ env.SERVICE }}/${{ env.SERVICE }}:buildcache

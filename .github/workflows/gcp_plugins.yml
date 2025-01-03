@@ -1,12 +1,20 @@
 name: Deploy Plugins to Cloud RUN
 
-# TODO: determine if changes to backend folder before pushing
-
 on:
-  push:
-    branches: [ "main", "development" ]
-    paths:
-      - 'plugins/example/**'
+#  push:
+#    branches: [ "main" ]
+#    paths:
+#      - 'backend/**'
+  workflow_dispatch:
+    inputs:
+      environment:
+        description: 'Select the environment to deploy to'
+        required: true
+        default: 'development'
+      branch:
+        description: 'Branch to deploy from'
+        required: true
+        default: 'main'
 
 env:
   SERVICE: plugins
@@ -14,13 +22,24 @@ env:
 
 jobs:
   deploy:
-    environment: ${{ (github.ref == 'refs/heads/development' && 'development') || (github.ref == 'refs/heads/main' && 'prod') }}
+    environment: ${{ github.event.inputs.environment }}
     permissions:
       contents: 'read'
       id-token: 'write'
 
     runs-on: ubuntu-latest
     steps:
+      - name: Validate Environment Input
+        run: |
+          if [[ "${{ github.event.inputs.environment }}" != "development" && "${{ github.event.inputs.environment }}" != "prod" ]]; then
+            echo "Invalid environment: ${{ github.event.inputs.environment }}. Must be 'development' or 'prod'."
+            exit 1
+          fi
+
+      # To workaround "no space left on device" issue of GitHub-hosted runner
+      - name: Delete huge unnecessary tools folder
+        run: rm -rf /opt/hostedtoolcache
+
       - name: Checkout
         uses: actions/checkout@v4
 
@@ -30,12 +49,24 @@ jobs:
         with:
           credentials_json: ${{ secrets.GCP_CREDENTIALS }}
 
-      - run: gcloud auth configure-docker
+      - name: Login to GCR
+        run: gcloud auth configure-docker us-central1-docker.pkg.dev
+
+      - name: Set up Docker Buildx
+        uses: docker/setup-buildx-action@v3
+
+      - name: Google Service Account
+        run: echo "${{ secrets.GCP_SERVICE_ACCOUNT }}" | base64 -d > ./backend/google-credentials.json
 
       - name: Build and Push Docker image
-        run: |
-          docker build -t gcr.io/${{ vars.GCP_PROJECT_ID }}/${{ env.SERVICE }} -f plugins/example/Dockerfile.datadog .
-          docker push gcr.io/${{ vars.GCP_PROJECT_ID }}/${{ env.SERVICE }}
+        uses: docker/build-push-action@v6
+        with:
+          context: .
+          file: ./plugins/example/Dockerfile
+          push: true
+          tags: us-central1-docker.pkg.dev/${{ vars.GCP_PROJECT_ID }}/${{ env.SERVICE }}/${{ env.SERVICE }}:latest
+          cache-from: type=registry,ref=us-central1-docker.pkg.dev/${{ vars.GCP_PROJECT_ID }}/${{ env.SERVICE }}/${{ env.SERVICE }}:buildcache
+          cache-to: type=registry,ref=us-central1-docker.pkg.dev/${{ vars.GCP_PROJECT_ID }}/${{ env.SERVICE }}/${{ env.SERVICE }}:buildcache,mode=max
 
       - name: Deploy to Cloud Run
         id: deploy
@@ -43,7 +74,7 @@ jobs:
         with:
           service: ${{ env.SERVICE }}
           region: ${{ env.REGION }}
-          image: gcr.io/${{ vars.GCP_PROJECT_ID }}/${{ env.SERVICE }}
+          image: us-central1-docker.pkg.dev/${{ vars.GCP_PROJECT_ID }}/${{ env.SERVICE }}/${{ env.SERVICE }}
 
       # If required, use the Cloud Run url output in later steps
       - name: Show Output

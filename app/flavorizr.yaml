@@ -1,29 +1,30 @@
 flavors:
   prod:
     app:
-      name: "Omi"
+      name: "Buddi"
       icon: "assets/images/app_launcher_icon.png"
     android:
-      applicationId: "com.friend.ios"
+      applicationId: "com.buddiai.ios"
       icon: "assets/images/app_launcher_icon.png"
       firebase:
-        config: "app/android/app/src/prod/google-services.json"
+        config: "android/app/src/prod/google-services.json"
     ios:
-      bundleId: "com.friend-app-with-wearable.ios12"
+      bundleId: "com.buddiai.ios"
       icon: "assets/images/app_launcher_icon.png"
+      app_icon_name: "AppIcon"
       firebase:
-        config: "app/ios/Config/Prod/GoogleService-Info.plist"
+        config: "ios/Config/Prod/GoogleService-Info.plist"
   dev:
     app:
-      name: "Omi Dev"
+      name: "Buddi Dev"
       icon: "assets/images/app_launcher_icon.png"
     android:
       icon: "assets/images/app_launcher_icon.png"
-      applicationId: "com.friend.ios.dev"
+      applicationId: "com.buddiai.ios.development"
       firebase:
-        config: "app/android/app/src/dev/google-services.json"
+        config: "android/app/src/dev/google-services.json"
     ios:
-      bundleId: "com.friend-app-with-wearable.ios12.development"
-      icon: "assets/images/app_launcher_icon.png"
+      bundleId: "com.buddiai.ios12.development"
+      app_icon_name: "AppIcon"
       firebase:
-        config: "app/ios/Config/Dev/GoogleService-Info.plist"
+        config: "ios/Config/Dev/GoogleService-Info.plist"

@@ -42,7 +42,7 @@ dependencies:
   mixpanel_flutter: ^2.2.0
 
   # Utils
-  collection: 1.18.0
+  collection: ^1.19.0
   equatable: 2.0.5
   flutter_blue_plus: 1.33.6
   http: ^1.2.1
@@ -143,9 +143,8 @@ flutter_launcher_icons:
   android: true
   ios: true
   remove_alpha_ios: true
-  web:
-    generate: true
-  image_path: 'assets/images/app_launcher_icon.png'
+  app_icon_name: "AppIcon"
+  image_path: "assets/images/app_launcher_icon.png"
 
 
 flutter:

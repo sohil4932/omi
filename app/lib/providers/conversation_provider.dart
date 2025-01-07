@@ -14,7 +14,6 @@ class ConversationProvider extends ChangeNotifier implements IWalServiceListener
   Map<DateTime, List<ServerConversation>> groupedConversations = {};
 
   bool isLoadingConversations = false;
-  bool hasNonDiscardedConversations = true;
   bool showDiscardedConversations = false;
 
   String previousQuery = '';
@@ -73,13 +72,20 @@ class ConversationProvider extends ChangeNotifier implements IWalServiceListener
 
   Future<void> searchConversations(String query) async {
     if (query.isEmpty) {
-      searchedConversations = conversations;
-      groupSearchConvosByDate();
+      previousQuery = "";
+      currentSearchPage = 0;
+      totalSearchPages = 0;
+      searchedConversations = [];
+      groupConversationsByDate();
+
+      notifyListeners();
       return;
     }
+
     if (query == previousQuery) {
       return;
     }
+
     setIsFetchingConversations(true);
     previousQuery = query;
     var (convos, current, total) = await searchConversationsServer(query);
@@ -89,6 +95,7 @@ class ConversationProvider extends ChangeNotifier implements IWalServiceListener
     totalSearchPages = total;
     groupSearchConvosByDate();
     setIsFetchingConversations(false);
+
     notifyListeners();
   }
 
@@ -143,11 +150,15 @@ class ConversationProvider extends ChangeNotifier implements IWalServiceListener
   }
 
   void toggleDiscardConversations() {
-    MixpanelManager().showDiscardedMemoriesToggled(!SharedPreferencesUtil().showDiscardedMemories);
-    SharedPreferencesUtil().showDiscardedMemories = !SharedPreferencesUtil().showDiscardedMemories;
-    showDiscardedConversations = SharedPreferencesUtil().showDiscardedMemories;
-    // filterGroupedMemories('');
-    notifyListeners();
+    showDiscardedConversations = !showDiscardedConversations;
+
+    if (previousQuery.isNotEmpty) {
+      groupSearchConvosByDate();
+    } else {
+      groupConversationsByDate();
+    }
+
+    MixpanelManager().showDiscardedMemoriesToggled(showDiscardedConversations);
   }
 
   void setLoadingConversations(bool value) {
@@ -156,6 +167,13 @@ class ConversationProvider extends ChangeNotifier implements IWalServiceListener
   }
 
   Future getInitialConversations() async {
+    // reset search
+    previousQuery = "";
+    currentSearchPage = 0;
+    totalSearchPages = 0;
+    searchedConversations = [];
+
+    // fetch convos
     conversations = await getConversationsFromServer();
 
     processingConversations = conversations.where((m) => m.status == ConversationStatus.processing).toList();
@@ -173,16 +191,32 @@ class ConversationProvider extends ChangeNotifier implements IWalServiceListener
     notifyListeners();
   }
 
+  List<ServerConversation> _filterOutConvos(List<ServerConversation> convos) {
+    var havingFilters = true;
+    if (showDiscardedConversations) {
+      havingFilters = false;
+    }
+    if (!havingFilters) {
+      return convos;
+    }
+    return convos.where((convo) {
+      if (!showDiscardedConversations && (convo.discarded && !convo.isNew)) {
+        return false;
+      }
+      return true;
+    }).toList();
+  }
+
   void _groupSearchConvosByDateWithoutNotify() {
     groupedConversations = {};
-    for (var conversation in searchedConversations) {
-      // if (SharedPreferencesUtil().showDiscardedMemories && conversation.discarded && !conversation.isNew) continue;
+    for (var conversation in _filterOutConvos(searchedConversations)) {
       var date = DateTime(conversation.createdAt.year, conversation.createdAt.month, conversation.createdAt.day);
       if (!groupedConversations.containsKey(date)) {
         groupedConversations[date] = [];
       }
       groupedConversations[date]?.add(conversation);
     }
+
     // Sort
     for (final date in groupedConversations.keys) {
       groupedConversations[date]?.sort((a, b) => b.createdAt.compareTo(a.createdAt));
@@ -191,14 +225,14 @@ class ConversationProvider extends ChangeNotifier implements IWalServiceListener
 
   void _groupConversationsByDateWithoutNotify() {
     groupedConversations = {};
-    for (var conversation in conversations) {
-      // if (SharedPreferencesUtil().showDiscardedMemories && conversation.discarded && !conversation.isNew) continue;
+    for (var conversation in _filterOutConvos(conversations)) {
       var date = DateTime(conversation.createdAt.year, conversation.createdAt.month, conversation.createdAt.day);
       if (!groupedConversations.containsKey(date)) {
         groupedConversations[date] = [];
       }
       groupedConversations[date]?.add(conversation);
     }
+
     // Sort
     for (final date in groupedConversations.keys) {
       groupedConversations[date]?.sort((a, b) => b.createdAt.compareTo(a.createdAt));

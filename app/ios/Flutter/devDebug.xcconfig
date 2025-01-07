@@ -2,5 +2,5 @@
 #include "Generated.xcconfig"
 
 ASSET_PREFIX=dev
-BUNDLE_NAME=Omi Dev
-BUNDLE_DISPLAY_NAME=Omi Dev
+BUNDLE_NAME=Buddi Dev
+BUNDLE_DISPLAY_NAME=Buddi Dev

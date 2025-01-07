@@ -16,8 +16,8 @@ class _ConnectDevicePageState extends State<ConnectDevicePage> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-        appBar: AppBar(
-          title: const Text('Connect'),
+        appBar: AppBar(f
+          title: const Text('Connect Your Buddi'),
           backgroundColor: Theme.of(context).colorScheme.primary,
           actions: [
             IconButton(

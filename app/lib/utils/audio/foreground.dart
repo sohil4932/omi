@@ -23,7 +23,8 @@ class _ForegroundFirstTaskHandler extends TaskHandler {
       if (await Geolocator.checkPermission() == LocationPermission.always) {
         var locationData = await Geolocator.getCurrentPosition();
         if (_locationUpdatedAt == null ||
-            _locationUpdatedAt!.isBefore(DateTime.now().subtract(const Duration(minutes: 5)))) {
+            _locationUpdatedAt!.isBefore(
+                DateTime.now().subtract(const Duration(minutes: 5)))) {
           Object loc = {
             "latitude": locationData.latitude,
             "longitude": locationData.longitude,
@@ -84,7 +85,8 @@ class ForegroundUtil {
     }
   }
 
-  Future<bool> get isIgnoringBatteryOptimizations async => await FlutterForegroundTask.isIgnoringBatteryOptimizations;
+  Future<bool> get isIgnoringBatteryOptimizations async =>
+      await FlutterForegroundTask.isIgnoringBatteryOptimizations;
 
   static Future<void> initializeForegroundService() async {
     if (await FlutterForegroundTask.isRunningService) return;
@@ -94,7 +96,8 @@ class ForegroundUtil {
       androidNotificationOptions: AndroidNotificationOptions(
         channelId: 'foreground_service',
         channelName: 'Foreground Service Notification',
-        channelDescription: 'Transcription service is running in the background.',
+        channelDescription:
+            'Transcription service is running in the background.',
         channelImportance: NotificationChannelImportance.LOW,
         priority: NotificationPriority.HIGH,
         // iconData: const NotificationIconData(
@@ -124,7 +127,7 @@ class ForegroundUtil {
       return FlutterForegroundTask.restartService();
     } else {
       return await FlutterForegroundTask.startService(
-        notificationTitle: 'Your Omi Device is connected.',
+        notificationTitle: 'Your Buddi Device is connected.',
         notificationText: 'Transcription service is running in the background.',
         callback: _startForegroundCallback,
       );

@@ -29,6 +29,30 @@ class SharedPreferencesUtil {
 
   //-------------------------------- Device ----------------------------------//
 
+  bool? get hasOmiDevice => _preferences?.getBool('hasOmiDevice');
+
+  set hasOmiDevice(bool? value) {
+    if (value != null) {
+      _preferences?.setBool('hasOmiDevice', value);
+    } else {
+      _preferences?.remove('hasOmiDevice');
+    }
+  }
+
+  bool get hasPersonaCreated => getBool('hasPersonaCreated') ?? false;
+
+  set hasPersonaCreated(bool value) => saveBool('hasPersonaCreated', value);
+
+  String? get verifiedPersonaId => getString('verifiedPersonaId');
+
+  set verifiedPersonaId(String? value) {
+    if (value != null) {
+      _preferences?.setString('verifiedPersonaId', value);
+    } else {
+      _preferences?.remove('verifiedPersonaId');
+    }
+  }
+
   set btDevice(BtDevice value) {
     saveString('btDevice', jsonEncode(value.toJson()));
   }
@@ -93,6 +117,10 @@ class SharedPreferencesUtil {
 
   bool get devModeJoanFollowUpEnabled => getBool('devModeJoanFollowUpEnabled') ?? false;
 
+  set transcriptionDiagnosticEnabled(bool value) => saveBool('transcriptionDiagnosticEnabled', value);
+
+  bool get transcriptionDiagnosticEnabled => getBool('transcriptionDiagnosticEnabled') ?? false;
+
   set conversationEventsToggled(bool value) => saveBool('conversationEventsToggled', value);
 
   bool get conversationEventsToggled => getBool('conversationEventsToggled') ?? false;
@@ -124,6 +152,10 @@ class SharedPreferencesUtil {
   bool get showInstallAppConfirmation => getBool('showInstallAppConfirmation') ?? true;
 
   set showInstallAppConfirmation(bool value) => saveBool('showInstallAppConfirmation', value);
+  
+  bool get showFirmwareUpdateDialog => getBool('v2/showFirmwareUpdateDialog') ?? true;
+
+  set showFirmwareUpdateDialog(bool value) => saveBool('v2/showFirmwareUpdateDialog', value);
 
   String get recordingsLanguage => getString('recordingsLanguage') ?? 'en';
 
@@ -177,6 +209,10 @@ class SharedPreferencesUtil {
 
   int get enabledAppsIntegrationsCount =>
       appsList.where((element) => element.enabled && element.worksExternally()).length;
+
+  bool get showConversationDeleteConfirmation => getBool('showConversationDeleteConfirmation') ?? true;
+  
+  set showConversationDeleteConfirmation(bool value) => saveBool("showConversationDeleteConfirmation", value);
 
   List<App> get appsList {
     final List<String> apps = getStringList('appsList') ?? [];
@@ -388,12 +424,4 @@ class SharedPreferencesUtil {
   Future<bool> clear() async {
     return await _preferences?.clear() ?? false;
   }
-
-  String get customBackendUrl => getString('customBackendUrl') ?? '';
-
-  set customBackendUrl(String value) => saveString('customBackendUrl', value);
-
-  String get customAuthPassword => getString('customAuthPassword') ?? '';
-
-  set customAuthPassword(String value) => saveString('customAuthPassword', value);
 }

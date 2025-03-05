@@ -1,13 +1,11 @@
 import 'dart:async';
 import 'dart:convert';
-import 'dart:io';
 import 'dart:typed_data';
 
 import 'package:flutter/material.dart';
 import 'package:flutter_foreground_task/flutter_foreground_task.dart';
 import 'package:flutter_provider_utilities/flutter_provider_utilities.dart';
 import 'package:friend_private/backend/http/api/conversations.dart';
-import 'package:friend_private/backend/http/api/messages.dart';
 import 'package:friend_private/backend/preferences.dart';
 import 'package:friend_private/backend/schema/bt_device/bt_device.dart';
 import 'package:friend_private/backend/schema/conversation.dart';
@@ -25,12 +23,9 @@ import 'package:friend_private/services/sockets/sdcard_socket.dart';
 import 'package:friend_private/services/sockets/transcription_connection.dart';
 import 'package:friend_private/services/wals.dart';
 import 'package:friend_private/utils/analytics/mixpanel.dart';
-import 'package:friend_private/utils/audio/wav_bytes.dart';
 import 'package:friend_private/utils/enums.dart';
-import 'package:friend_private/utils/file.dart';
 import 'package:friend_private/utils/logger.dart';
 import 'package:internet_connection_checker_plus/internet_connection_checker_plus.dart';
-import 'package:path_provider/path_provider.dart';
 import 'package:permission_handler/permission_handler.dart';
 import 'package:uuid/uuid.dart';
 
@@ -59,6 +54,9 @@ class CaptureProvider extends ChangeNotifier
   InternetStatus? _internetStatus;
 
   get internetStatus => _internetStatus;
+
+  List<ServerMessageEvent> _transcriptionServiceStatuses = [];
+  List<ServerMessageEvent> get transcriptionServiceStatuses => _transcriptionServiceStatuses;
 
   CaptureProvider() {
     _internetStatusListener = PureCore().internetConnection.onStatusChange.listen((InternetStatus status) {
@@ -461,6 +459,7 @@ class CaptureProvider extends ChangeNotifier
 
   @override
   void onClosed() {
+    _transcriptionServiceStatuses = [];
     _transcriptServiceReady = false;
     debugPrint('[Provider] Socket is closed');
 
@@ -491,6 +490,7 @@ class CaptureProvider extends ChangeNotifier
 
   @override
   void onError(Object err) {
+    _transcriptionServiceStatuses = [];
     _transcriptServiceReady = false;
     debugPrint('err: $err');
     notifyListeners();
@@ -535,6 +535,26 @@ class CaptureProvider extends ChangeNotifier
       _processConversationCreated(event.conversation, event.messages ?? []);
       return;
     }
+
+    if (event.type == MessageEventType.lastConversation) {
+      if (event.memoryId == null) {
+        debugPrint("Memory ID not received in last_memory event. Content is: $event");
+        return;
+      }
+      _handleLastConvoEvent(event.memoryId!);
+      return;
+    }
+
+    if (event.type == MessageEventType.serviceStatus) {
+      if (event.status == null) {
+        return;
+      }
+
+      _transcriptionServiceStatuses.add(event);
+      _transcriptionServiceStatuses = List.from(_transcriptionServiceStatuses);
+      notifyListeners();
+      return;
+    }
   }
 
   Future<void> forceProcessingCurrentConversation() async {
@@ -562,6 +582,21 @@ class CaptureProvider extends ChangeNotifier
     if (conversation == null) return;
     conversationProvider?.upsertConversation(conversation);
     MixpanelManager().conversationCreated(conversation);
+  }
+
+  Future<void> _handleLastConvoEvent(String memoryId) async {
+    bool conversationExists =
+        conversationProvider?.conversations.any((conversation) => conversation.id == memoryId) ?? false;
+    if (conversationExists) {
+      return;
+    }
+    ServerConversation? conversation = await getConversationById(memoryId);
+    if (conversation != null) {
+      debugPrint("Adding last conversation to conversations: $memoryId");
+      conversationProvider?.upsertConversation(conversation);
+    } else {
+      debugPrint("Failed to fetch last conversation: $memoryId");
+    }
   }
 
   @override
